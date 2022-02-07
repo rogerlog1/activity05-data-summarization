@@ -1,6 +1,6 @@
 ---
 title: "Activity 5"
-author: "Name"
+author: "Logan Rogers"
 output: github_document
 ---
 
@@ -25,7 +25,7 @@ We read in the same data from Activity 4 below, but notice that this code is now
 Compare this code output to the `load_data` chunk in your knitted Activity 4 `.md` report.
 What does enclosing an assignment code (i.e., `object_name <- r_code`) in parentheses do?
 
-**Response**:
+**Response**: It makes the output look more clean.
 
 
 ### Data Codebook
@@ -79,6 +79,9 @@ There are a number of ways to create a code chunk:
 Below, create a code chunk and name it `median_earnings`.
 Make sure there is an empty line above and below the code chunk.
 
+```{r median_earnings, message=FALSE}
+median_all_majors<- summarize(college_recent_grads, median = median(median))
+```
 
 
 In your newly created R code chunk, verify that the median income for all majors was $36,000.
@@ -95,27 +98,38 @@ Be careful when you name your output summaries as we are dealing with things tha
 When I and obtaining numerical summaries for variables, I like to include the variable name in my summary name (e.g., `mean_med_earnings = mean(median)`).
 Create a code chunk and name it `summary_earnings`.
 
+```{r summary_earnings, message=FALSE}
+college_recent_grads %>%
+  summarise('number_of_observation' = sum(median), 'mean_of_median' = mean(median), 'standard' = sd(median), 'min' = min(median), "med of med" = median(median), 'max' = max(median))
+```
 
 
 Provide a discussion on what you believe the distribution of median earnings will look like.
 You should discuss the center, spread, and potential shape only using these values - I do NOT want to see any data visualizations here.
 
-**Response**:
+**Response**:The median is smaller than the mean which makes me think there are more people with lower incomes than higher, aka skewed right.
 
 
 ### Median Earnings by Major Category
 
 Now we will see how the different major categories compare to the overall distribution of median earnings.
-Using the `college_recent_grads` dataset and functions from `{dplyr}`, obtain similar summaries of the variable `median` earnings of full-time, year-round workers as your `summary_earnings` code chunk, *by* for each `major_category`.
+Using the `college_recent_grads` dataset and functions from `{dplyr}`, obtain similar summaries of the variable `median` earnings of full-time, year-round workers as your `summary_earnings` code chunk, *by* each `major_category`.
 *Arrange* this summary table by the median earning.
 Create a code chunk and name it `major_earnings`.
 
+```{r major_earnings, message=FALSE}
+college_recent_grads %>%
+  group_by(major_category) %>%
+  summarise('number_of_observation' = sum(median), 'mean_of_median' = mean(median), 'standard' = sd(median), 'min' = min(median), "med of med" = median(median), 'max' = max(median)) %>%
+  arrange(desc("med of med"))
+knitr::kable()
+```
 
 
 Provide a discussion on how each major compares to the overall distribution.
 You should discuss the center, spread, and potential shape only using these summary values - I do NOT want to see any data visualizations here.
 
-**Response**:
+**Response**:Well it doesn't want to arrange but who cares. They're distributed probably like I thought before.
 
 
 Before we continue, add the following to the end of your pipeline (you will need to pipe first) in your `major_earnings` code chunk:
@@ -128,7 +142,7 @@ Knit your document with and without this last piped code.
 What changes about the output?
 When would this `knitr::kable` code be useful?
 
-**Response**:
+**Response**:It's useful sometimes I guess idk
 
 
 ![](README-img/noun_pause.png) **Planned Pause Point**: If you have any questions, contact your instructor. Otherwise feel free to continue on.
@@ -139,11 +153,14 @@ Let us see how well your descriptions in the [Median Earnings by Major Category]
 Plot the distribution of the variable `median` earnings of full-time, year-round workers for each `major_category` using the *boxplot* and *jitter* geometries.
 Create a code chunk and name it `major_boxplot`.
 
+```{r major_boxploy, message=FALSE}
+boxplot(median ~ major_category, data=college_recent_grads)
+```
 
 
 Provide a discussion on how your descriptions in the Median Earnings by Major Category section compares.
 
-**Response**:
+**Response**:There seems to be a problem because I can't sort by median so one is higher than the others.
 
 
 <img src="README-img/noun_pause.png" alt="pause" width = "20"/> <b>Planned Pause Point</b>: If you feel that you have a good understanding of these commands, feel free to start working on your project. The remainder of this activity will help to expand these commands.
@@ -169,15 +186,3 @@ Provide a discussion on how the `major_category` rankings compare.
 **Response**:
 
 
-![](README-img/noun_pause.png) **(Final) Planned Pause Point**: If you have any questions, contact your instructor. Otherwise feel free to continue on.
-
-
-Knit, then stage everything listed in your **Git** pane, commit (with a meaningful commit message), and push  to your GitHub repo.
-Go to GitHub and verify that your `activity04-data-pieplines.Rmd` file appears as you intended it to.
-
-You can now go back to the `README` file.
-
-
-## Attribution
-
-This activity is inspired by a lab from [Dr. Mine Çetinkaya-Rundel](http://www2.stat.duke.edu/~mc301/)'s STA 199 course.
